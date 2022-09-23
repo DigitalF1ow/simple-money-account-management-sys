@@ -1,13 +1,17 @@
-<script setup>
+<script>
 //import { RouterLink, RouterView } from "vue-router";
+import MainHeader from "./components/MainHeader.vue";
+
+export default {
+  name: "App",
+  components: {
+    MainHeader,
+  },
+};
 </script>
 
 <template>
-  <h1>Hello World</h1>
+  <div>
+    <MainHeader title="Money Account Management System" />
+  </div>
 </template>
-
-<style scoped>
-h1 {
-  color: black;
-}
-</style>
