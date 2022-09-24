@@ -41,6 +41,7 @@ export default {
         return true;
       }
     },
+    /* Make sure to get this working! */
     onSubmit(e) {
       e.preventDefault();
       if (this.account.accountType !== "") {
