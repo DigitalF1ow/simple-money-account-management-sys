@@ -16,15 +16,18 @@ export default {
       <p>Select which operation you would like to do.</p>
     </section>
 
-    <section class="row row-cols-1 row-cols-md-3 g-4">
+    <section class="row row-cols-2 row-cols-md-4 g-2 g-md-4">
       <div class="col">
-        <DashboardItem titleName="View Accounts" acctLink="/accounts" />
+        <DashboardItem titleName="Add Account" acctLink="/add" />
+      </div>
+      <div class="col">
+        <DashboardItem titleName="View Accounts" acctLink="/view-accounts" />
       </div>
       <div class="col">
         <DashboardItem titleName="Transfer Money" acctLink="/transfer" />
       </div>
       <div class="col">
-        <DashboardItem titleName="Delete Account" acctLink="/delete" />
+        <DashboardItem titleName="Close Account" acctLink="/delete-accounts" />
       </div>
     </section>
   </div>

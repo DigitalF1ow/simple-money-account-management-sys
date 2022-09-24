@@ -2,7 +2,7 @@
 import AccountItem from "../components/AccountItem.vue";
 import CustomButton from "../components/CustomButton.vue";
 export default {
-  name: "AccountView",
+  name: "DeleteView",
   props: {},
   components: {
     AccountItem,
@@ -15,14 +15,12 @@ export default {
   <div class="container my-5">
     <CustomButton :hasLink="true" btnLink="/" btnTitle="Back" />
     <section class="my-5">
-      <h1>View Account Balance</h1>
-      <p>Check your account types and details from here.</p>
+      <h1>Close Account</h1>
+      <p>
+        Close your account from here, if there is any available balance in the
+        account, it will be transferred automatically to your savings account.
+      </p>
     </section>
-    <!-- <section>
-      <CustomButton :hasLink="true" btnLink="/" btnTitle="Back" />
-      <CustomButton :hasLink="true" btnLink="/" btnTitle="Back" />
-      <CustomButton :hasLink="true" btnLink="/" btnTitle="Back" />
-    </section> -->
     <section class="row row-cols-1 row-cols-md-3 g-4">
       <div class="col">
         <AccountItem acctName="Savings Account" acctBalance="RM0.00" />
