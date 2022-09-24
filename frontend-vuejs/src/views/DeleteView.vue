@@ -13,13 +13,21 @@ export default {
       accounts: [
         {
           id: "1",
-          acctType: "Savings",
+          acctType: "1",
+          acctTypeName: "Savings",
           balance: "10,000.50",
         },
         {
           id: "2",
-          acctType: "Goals",
-          balance: "20,000.50",
+          acctType: "2",
+          acctTypeName: "Goals",
+          balance: "10,000.50",
+        },
+        {
+          id: "3",
+          acctType: "3",
+          acctTypeName: "Investments",
+          balance: "5,000.50",
         },
       ],
     };

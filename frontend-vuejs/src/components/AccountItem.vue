@@ -15,14 +15,16 @@ export default {
 <template>
   <div class="card">
     <div class="card-body">
-      <h5 class="card-title">{{ account.acctType }}</h5>
+      <h5 class="card-title">{{ account.acctTypeName }}</h5>
       <p class="card-text">
         Account Balance <br />
         RM{{ account.balance }}
       </p>
       <CustomButton
-        v-if="this.$route.path === '/close-accounts'"
-        btnTitle="Delete"
+        v-if="
+          this.$route.path === '/close-accounts' && account.acctType === '3'
+        "
+        btnTitle="Close Account"
       />
     </div>
   </div>

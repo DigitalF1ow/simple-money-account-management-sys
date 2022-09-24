@@ -1,5 +1,5 @@
 <script>
-export default{
+export default {
   name: "HeaderLink",
   props: {
     title: {
@@ -11,7 +11,7 @@ export default{
       default: "/",
     },
   },
-}
+};
 </script>
 
 <template>
