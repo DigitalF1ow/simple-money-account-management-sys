@@ -13,5 +13,6 @@ export default {
 <template>
   <div>
     <MainHeader title="Money Account Management System" />
+    <router-view></router-view>
   </div>
 </template>
