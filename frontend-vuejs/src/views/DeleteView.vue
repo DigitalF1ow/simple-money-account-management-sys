@@ -8,6 +8,22 @@ export default {
     AccountItem,
     CustomButton,
   },
+  data() {
+    return {
+      accounts: [
+        {
+          id: "1",
+          acctType: "Savings",
+          balance: "10,000.50",
+        },
+        {
+          id: "2",
+          acctType: "Goals",
+          balance: "20,000.50",
+        },
+      ],
+    };
+  },
 };
 </script>
 
@@ -22,14 +38,8 @@ export default {
       </p>
     </section>
     <section class="row row-cols-1 row-cols-md-3 g-4">
-      <div class="col">
-        <AccountItem acctName="Savings Account" acctBalance="RM0.00" />
-      </div>
-      <div class="col">
-        <AccountItem acctName="Goals Account" acctBalance="RM0.00" />
-      </div>
-      <div class="col">
-        <AccountItem acctName="Investments Account" acctBalance="RM0.00" />
+      <div :key="account.id" v-for="account in accounts" class="col">
+        <AccountItem :account="account" />
       </div>
     </section>
   </div>

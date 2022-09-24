@@ -18,7 +18,7 @@ export default {
 
     <section class="row row-cols-2 row-cols-md-4 g-2 g-md-4">
       <div class="col">
-        <DashboardItem titleName="Add Account" acctLink="/add" />
+        <DashboardItem titleName="Add Account" acctLink="/add-account" />
       </div>
       <div class="col">
         <DashboardItem titleName="View Accounts" acctLink="/view-accounts" />
@@ -27,7 +27,7 @@ export default {
         <DashboardItem titleName="Transfer Money" acctLink="/transfer" />
       </div>
       <div class="col">
-        <DashboardItem titleName="Close Account" acctLink="/delete-accounts" />
+        <DashboardItem titleName="Close Account" acctLink="/close-accounts" />
       </div>
     </section>
   </div>

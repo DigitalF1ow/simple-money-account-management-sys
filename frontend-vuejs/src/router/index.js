@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "../views/HomePage.vue";
+import AddView from "../views/AddView.vue";
 import AccountView from "../views/AccountView.vue";
 import TransferView from "../views/TransferView.vue";
 import DeleteView from "../views/DeleteView.vue";
@@ -13,6 +14,11 @@ const router = createRouter({
       component: HomePage,
     },
     {
+      path: "/add-account",
+      name: "add-account",
+      component: AddView,
+    },
+    {
       path: "/view-accounts",
       name: "view-accounts",
       component: AccountView,
@@ -23,8 +29,8 @@ const router = createRouter({
       component: TransferView,
     },
     {
-      path: "/delete-accounts",
-      name: "delete-accounts",
+      path: "/close-accounts",
+      name: "close-accounts",
       component: DeleteView,
     },
   ],

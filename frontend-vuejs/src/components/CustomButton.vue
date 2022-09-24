@@ -11,9 +11,9 @@ export default {
       type: String,
       default: "Placeholder",
     },
-    btnType: {
+    btnStyle: {
       type: String,
-      default: "normal",
+      default: "btn-primary",
     },
   },
   methods: {
@@ -26,12 +26,12 @@ export default {
 
 <template>
   <router-link v-if="hasLink" :to="btnLink">
-    <button class="btn btn-primary">
+    <button class="btn" :class="btnStyle">
       {{ btnTitle }}
     </button>
   </router-link>
 
-  <button v-else class="btn btn-primary" @click="onClick()">
+  <button v-else class="btn" :class="btnStyle" @click="onClick()">
     {{ btnTitle }}
   </button>
 </template>

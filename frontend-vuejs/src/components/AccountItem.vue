@@ -1,15 +1,13 @@
 <script>
+import CustomButton from "../components/CustomButton.vue";
+
 export default {
   name: "AccountItem",
   props: {
-    acctName: {
-      type: String,
-      default: "Placeholder Account",
-    },
-    acctBalance: {
-      type: String,
-      default: "Placeholder Account",
-    },
+    account: Object,
+  },
+  components: {
+    CustomButton,
   },
 };
 </script>
@@ -17,11 +15,15 @@ export default {
 <template>
   <div class="card">
     <div class="card-body">
-      <h5 class="card-title">{{ acctName }}</h5>
+      <h5 class="card-title">{{ account.acctType }}</h5>
       <p class="card-text">
         Account Balance <br />
-        {{ acctBalance }}
+        RM{{ account.balance }}
       </p>
+      <CustomButton
+        v-if="this.$route.path === '/close-accounts'"
+        btnTitle="Delete"
+      />
     </div>
   </div>
 </template>
