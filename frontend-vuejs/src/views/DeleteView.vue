@@ -10,27 +10,39 @@ export default {
   },
   data() {
     return {
-      accounts: [
-        {
-          id: "1",
-          acctType: "1",
-          acctTypeName: "Savings",
-          balance: "10,000.50",
-        },
-        {
-          id: "2",
-          acctType: "2",
-          acctTypeName: "Goals",
-          balance: "10,000.50",
-        },
-        {
-          id: "3",
-          acctType: "3",
-          acctTypeName: "Investments",
-          balance: "5,000.50",
-        },
-      ],
+      accounts: [],
+      successDelete: false,
+      errorDelete: false,
+      errorMsg: "",
     };
+  },
+  methods: {
+    async fetchAccounts() {
+      const res = await fetch("api/accounts");
+
+      const acctData = await res.json();
+      return acctData;
+    },
+    async deleteAccount(account_id) {
+      try {
+        const res = await fetch(`api/account/${account_id}`, {
+          method: "DELETE",
+        });
+
+        if (res.status === 200) {
+          this.successDelete = true;
+          this.accounts = await this.fetchAccounts();
+        } else {
+          throw Error("Something Went Wrong!");
+        }
+      } catch (error) {
+        this.errorMsg = "Something went wrong! We are sorry about that.";
+        this.errorDelete = true;
+      }
+    },
+  },
+  async created() {
+    this.accounts = await this.fetchAccounts();
   },
 };
 </script>
@@ -44,10 +56,16 @@ export default {
         Close your account from here, if there is any available balance in the
         account, it will be transferred automatically to your savings account.
       </p>
+      <div v-show="successDelete" class="alert alert-success">
+        Account Successful Deleted.
+      </div>
+      <div v-show="errorDelete" class="alert alert-danger">
+        {{ errorMsg }}
+      </div>
     </section>
     <section class="row row-cols-1 row-cols-md-3 g-4">
       <div :key="account.id" v-for="account in accounts" class="col">
-        <AccountItem :account="account" />
+        <AccountItem :account="account" @close-account="deleteAccount" />
       </div>
     </section>
   </div>

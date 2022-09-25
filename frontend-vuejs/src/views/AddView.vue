@@ -29,12 +29,12 @@ export default {
     "account.accountType"(value) {
       if (value !== "") {
         this.validationAccountType = true;
+        this.account.validationAccountType = value;
       }
     },
   },
   methods: {
     validateAmount(amount) {
-      console.log(amount);
       if (!/^\d+\.{0,1}\d{0,2}$/.test(amount)) {
         return false;
       } else {
@@ -42,10 +42,37 @@ export default {
       }
     },
     /* Make sure to get this working! */
-    onSubmit(e) {
+    async onSubmit(e) {
       e.preventDefault();
       if (this.account.accountType !== "") {
-        console.log("Submitted!");
+        //Turn it into JSON Format Type
+        try {
+          const newAccount = {
+            user_id: 1,
+            acct_type: this.account.accountType,
+            balance: this.account.amount,
+          };
+
+          // eslint-disable-next-line no-unused-vars
+          const res = await fetch("api/accounts", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newAccount),
+          });
+
+          // eslint-disable-next-line no-constant-condition
+          if (res.status === 201) {
+            this.$router.push({
+              path: "/view-accounts",
+              query: { success: "true" },
+            });
+          }
+
+        } catch (error) {
+          console.log(error);
+        }
       } else {
         this.validationAccountType = false;
       }

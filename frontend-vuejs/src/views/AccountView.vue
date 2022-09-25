@@ -10,27 +10,21 @@ export default {
   },
   data() {
     return {
-      accounts: [
-        {
-          id: "1",
-          acctType: "1",
-          acctTypeName: "Savings",
-          balance: "10,000.50",
-        },
-        {
-          id: "2",
-          acctType: "2",
-          acctTypeName: "Goals",
-          balance: "10,000.50",
-        },
-        {
-          id: "3",
-          acctType: "3",
-          acctTypeName: "Investments",
-          balance: "5,000.50",
-        },
-      ],
+      accounts: [],
+      successMsg: false,
     };
+  },
+  methods: {
+    async fetchAccounts() {
+      const res = await fetch("api/accounts");
+
+      const acctData = await res.json();
+      return acctData;
+    },
+  },
+  async created() {
+    this.successMsg = this.$route.query.success === "true";
+    this.accounts = await this.fetchAccounts();
   },
 };
 </script>
@@ -42,6 +36,9 @@ export default {
       <h1>View Account Balance</h1>
       <p>Check your account types and details from here.</p>
     </section>
+    <div v-show="successMsg" class="alert alert-success">
+      New Account has successfully created.
+    </div>
     <!-- <section>
       <CustomButton :hasLink="true" btnLink="/" btnTitle="Back" />
       <CustomButton :hasLink="true" btnLink="/" btnTitle="Back" />

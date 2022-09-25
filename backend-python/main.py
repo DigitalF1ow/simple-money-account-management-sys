@@ -21,7 +21,7 @@ class UserModel(db.Model):
     
     #Similar To String Literal in JS
     def __repr__(self):
-        return f"User(id={id}, username={self.username})"
+        return f"User(id={self.id}, username={self.username})"
 
 class AccountTypeModel(db.Model):
     __tablename__ = 'account_type'
@@ -42,7 +42,7 @@ class AccountModel(db.Model):
     balance = db.Column(db.Float, nullable=False)
 
     def __repr__(self):
-        return f"Account(id={id},user_id={self.user_id},acct_type={self.acct_type},balance={self.balance})"
+        return f"Account(id={self.id},user_id={self.user_id},acct_type={self.acct_type},balance={self.balance})"
 
 
 #Request Parsers -> Handles Request Parsing
@@ -54,9 +54,10 @@ account_post_args.add_argument("balance", type=float, help="Balance of the Accou
 
 #Account Update Args
 account_put_args = reqparse.RequestParser()
-account_put_args.add_argument("acct_type", type=int, help="ID of the Account Type is Required!")
-account_put_args.add_argument("user_id", type=int, help="ID of the User is Required!")
-account_put_args.add_argument("balance", type=float, help="Balance of the Account is Required!")
+account_put_args.add_argument("acct_type", type=int)
+account_put_args.add_argument("user_id", type=int)
+account_put_args.add_argument("balance", type=float)
+account_put_args.add_argument("amount", type=float)
 
 
 #Serializers with Marshal With --> Takes results value from database and take into the JSON field, serialize it ino a JSON format
@@ -76,6 +77,15 @@ account_fields = {
     'acct_type': fields.Integer,
     'balance': fields.Float,
 }
+
+account_with_types_fields = {
+    'id' : fields.Integer,
+    'user_id': fields.Integer,
+    'acct_type': fields.Integer,
+    'balance': fields.Float,
+    'typename': fields.String,
+}
+
 
 class UserAPI(Resource):
     @marshal_with(user_fields)
@@ -143,10 +153,11 @@ class AccountAPI(Resource):
 
 #Get All Accounts
 class AccountsAPI(Resource):
-    @marshal_with(account_fields)
+    @marshal_with(account_with_types_fields)
     def get(self):
-        res = AccountModel.query.all()
-        
+        res = AccountModel.query.with_entities(AccountModel.id, AccountModel.user_id, AccountModel.acct_type, AccountModel.balance)\
+            .join(AccountTypeModel, AccountModel.acct_type==AccountTypeModel.id)\
+            .add_columns(AccountTypeModel.typename).all()
         if not res:
             abort(404, message = "Accounts can't be found.")
         return res
@@ -154,7 +165,6 @@ class AccountsAPI(Resource):
     @marshal_with(account_fields)
     def post(self):
         args = account_post_args.parse_args()
-        
         new_account = AccountModel(user_id=args['user_id'], acct_type=args['acct_type'], balance = args["balance"])
         db.session.add(new_account)
         db.session.commit()
@@ -163,9 +173,13 @@ class AccountsAPI(Resource):
 #Get All Accounts Based on User ID
 class AccountsByUserID(Resource):
 
-    @marshal_with(account_fields)
+    @marshal_with(account_with_types_fields)
     def get(self, user_id):
-        res = AccountModel.query.filter_by(user_id=user_id).all()
+        res = AccountModel.query.with_entities(AccountModel.id, AccountModel.user_id, AccountModel.acct_type, AccountModel.balance)\
+            .filter_by(user_id=user_id)\
+            .join(AccountTypeModel, AccountModel.acct_type==AccountTypeModel.id)\
+            .add_columns(AccountTypeModel.typename).all()
+        print(res)
         
         if not res:
             abort(404, message = "Accounts can't be found.")
