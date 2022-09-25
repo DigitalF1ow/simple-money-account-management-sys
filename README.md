@@ -44,3 +44,7 @@ In order to change the backend API URL, just change the server proxy located in 
 
 ## Configuring Database Connection
 You can do so in `database.ini` to change the database configuration
+
+## Backend API Documentation via Swagger UI
+With Flask-apispec, marshmellow and webargs, Swagger UI is used to record the documentation of the API
+it can be access by going via `/swagger-ui` in the backend address
