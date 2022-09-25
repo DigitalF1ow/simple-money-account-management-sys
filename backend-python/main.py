@@ -102,8 +102,16 @@ class AccountTypeAPI(Resource):
         if not res:
             abort(404, message = "Account Type can't be found")
         return res
-    
 
+class AccountTypeListAPI(Resource):
+    @marshal_with(acctType_fields)
+    def get(self):
+        res = AccountModel.query.all()
+        
+        if not res:
+            abort(404, message = "Account Types can't be found")
+        return res
+    
 #Individual Account
 class AccountAPI(Resource):
 
@@ -197,9 +205,10 @@ class AccountsByUserID(Resource):
 api.add_resource(UserAPI, "/user/<int:user_id>")
 
 #Account Types Resource
+api.add_resource(AccountTypeAPI, "/account-types/<int:type_id>")
+api.add_resource(AccountTypeListAPI, "/account-types")
 
 # Accounts API Resource
-
 api.add_resource(AccountsAPI, "/accounts")
 api.add_resource(AccountsByUserID, "/accounts/<int:user_id>")
 api.add_resource(AccountAPI, "/account/<int:account_id>")
