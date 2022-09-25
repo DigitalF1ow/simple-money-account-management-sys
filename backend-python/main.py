@@ -141,9 +141,6 @@ class AccountAPI(Resource):
 
         return res
 
-        
-
-
 #Get All Accounts
 class AccountsAPI(Resource):
     @marshal_with(account_fields)
