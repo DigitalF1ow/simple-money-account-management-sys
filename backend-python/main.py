@@ -2,13 +2,35 @@ from turtle import reset
 from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from flask_restful import Api, Resource, reqparse, abort, fields, marshal_with
+from flask_restful import Api, Resource, reqparse, abort
+
+# Implement Swagger API
+from apispec import APISpec
+from marshmallow import Schema, fields
+from apispec.ext.marshmallow import MarshmallowPlugin
+from flask_apispec.extension import FlaskApiSpec
+from flask_apispec.views import MethodResource
+from flask_apispec import marshal_with, doc, use_kwargs
+
 
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
 api = Api(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mariadb+pymysql://root:halflife2@127.0.0.1/money_management_sys'
 
+app.config.update({
+    'APISPEC_SPEC': APISpec(
+        title='Money Account Management System',
+        version='v1',
+        plugins=[MarshmallowPlugin()],
+        openapi_version='2.0.0'
+    ),
+    'APISPEC_SWAGGER_URL': '/swagger/',  # URI to access API Doc JSON 
+    'APISPEC_SWAGGER_UI_URL': '/swagger-ui/'  # URI to access UI of API Doc
+})
+
+#Setting up with Flask App
+docs = FlaskApiSpec(app)
 db = SQLAlchemy(app)
 
 #Database Models
@@ -59,43 +81,39 @@ account_put_args.add_argument("transfer_amount", type=float)
 
 
 #Serializers with Marshal With --> Takes results value from database and take into the JSON field, serialize it ino a JSON format
-user_fields = {
-    'id' : fields.Integer,
-    'user_name': fields.String,
-}
+class UserFields(Schema):
+    id = fields.Int()
+    user_name = fields.Str()
 
-acctType_fields = {
-    'id' : fields.Integer,
-    'type_name': fields.String,
-}
+class AccountTypeFields(Schema):
+    id = fields.Int()
+    type_name = fields.Str()
 
-account_fields = {
-    'id' : fields.Integer,
-    'user_id': fields.Integer,
-    'acct_type': fields.Integer,
-    'balance': fields.Float,
-}
+class AccountFields(Schema):
+    id = fields.Int()
+    user_id= fields.Int()
+    acct_type= fields.Int()
+    balance= fields.Float()
 
-account_with_types_fields = {
-    'id' : fields.Integer,
-    'user_id': fields.Integer,
-    'acct_type': fields.Integer,
-    'balance': fields.Float,
-    'type_name': fields.String,
-}
+class AccountWithTypesFields(Schema): 
+    id = fields.Int()
+    user_id= fields.Int()
+    acct_type= fields.Int()
+    balance= fields.Float()
+    type_name= fields.Str()
 
 
-class UserAPI(Resource):
-    @marshal_with(user_fields)
+class UserAPI(MethodResource, Resource):
+    @marshal_with(UserFields)
     def get(self, user_id):
         res = UserModel.query.filter_by(id=user_id).first()
-        
+        print(res)
         if not res:
             abort(404, message = "User can't be found")
         return res
 
-class AccountTypeAPI(Resource):
-    @marshal_with(acctType_fields)
+class AccountTypeAPI(MethodResource, Resource):
+    @marshal_with(AccountTypeFields)
     def get(self, type_id):
         res = AccountModel.query.filter_by(id=type_id).first()
         
@@ -103,8 +121,8 @@ class AccountTypeAPI(Resource):
             abort(404, message = "Account Type can't be found")
         return res
 
-class AccountTypeListAPI(Resource):
-    @marshal_with(acctType_fields)
+class AccountTypeListAPI(MethodResource, Resource):
+    @marshal_with(AccountTypeFields)
     def get(self):
         res = AccountModel.query.all()
         
@@ -113,9 +131,9 @@ class AccountTypeListAPI(Resource):
         return res
     
 #Individual Account
-class AccountAPI(Resource):
+class AccountAPI(MethodResource, Resource):
 
-    @marshal_with(account_fields)
+    @marshal_with(AccountFields)
     def get(self, account_id):
         res = AccountModel.query.filter_by(id=account_id).first()
         
@@ -123,7 +141,7 @@ class AccountAPI(Resource):
             abort(404, message = "Account can't be found")
         return res
     
-    @marshal_with(account_fields)
+    @marshal_with(AccountFields)
     def patch(self, account_id):
         args = account_put_args.parse_args()
 
@@ -152,7 +170,7 @@ class AccountAPI(Resource):
 
         return res
 
-    @marshal_with(account_fields)
+    @marshal_with(AccountFields)
     def delete(self, account_id):
         #Deletes the account instantly
         res = AccountModel.query.filter_by(id=account_id).first()
@@ -167,8 +185,8 @@ class AccountAPI(Resource):
         return res
 
 #Get All Accounts
-class AccountsAPI(Resource):
-    @marshal_with(account_with_types_fields)
+class AccountsAPI(MethodResource, Resource):
+    @marshal_with(AccountWithTypesFields(many = True))
     def get(self):
         res = AccountModel.query.with_entities(AccountModel.id, AccountModel.user_id, AccountModel.acct_type, AccountModel.balance)\
             .join(AccountTypeModel, AccountModel.acct_type==AccountTypeModel.id)\
@@ -177,7 +195,7 @@ class AccountsAPI(Resource):
             abort(404, message = "Accounts can't be found.")
         return res
 
-    @marshal_with(account_fields)
+    @marshal_with(AccountFields)
     def post(self):
         args = account_post_args.parse_args()
         new_account = AccountModel(user_id=args['user_id'], acct_type=args['acct_type'], balance = args["balance"])
@@ -186,9 +204,9 @@ class AccountsAPI(Resource):
         return new_account, 201
 
 #Get All Accounts Based on User ID
-class AccountsByUserID(Resource):
+class AccountsByUserID(MethodResource, Resource):
 
-    @marshal_with(account_with_types_fields)
+    @marshal_with(AccountWithTypesFields(many = True))
     def get(self, user_id):
         res = AccountModel.query.with_entities(AccountModel.id, AccountModel.user_id, AccountModel.acct_type, AccountModel.balance)\
             .filter_by(user_id=user_id)\
@@ -213,8 +231,16 @@ api.add_resource(AccountsAPI, "/accounts")
 api.add_resource(AccountsByUserID, "/accounts/<int:user_id>")
 api.add_resource(AccountAPI, "/account/<int:account_id>")
 
+# Register APIs into Swagger UI
+docs.register(UserAPI)
+docs.register(AccountTypeAPI)
+docs.register(AccountTypeListAPI)
+docs.register(AccountsByUserID)
+docs.register(AccountsAPI)
+docs.register(AccountAPI)
+
 @app.route('/')
 def index():
-    return 'Web App with Python Flask!'
+    return 'Welcome to Money Account Management System Backend API using Flask Python!'
 
 app.run(host='0.0.0.0', port=5000, debug=True)
