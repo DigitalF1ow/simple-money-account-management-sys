@@ -149,9 +149,14 @@ export default {
 <template>
   <section class="container my-5">
     <CustomButton :hasLink="true" btnLink="/" btnTitle="Back" />
-    <section class="my-5">
+    <section class="my-4">
+      <font-awesome-icon
+        class="py-2"
+        icon="fa-solid fa-money-bill-transfer"
+        size="5x"
+      />
       <h1>Transfer Money</h1>
-      <p>Transfer your money from one account to another.</p>
+      <p class="mb-5">Transfer your money from one account to another.</p>
       <div v-show="alertShow" :class="alertType" class="alert">
         {{ alertMsg }}
       </div>

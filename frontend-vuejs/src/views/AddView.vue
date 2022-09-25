@@ -88,9 +88,14 @@ export default {
 <template>
   <section class="container my-5">
     <CustomButton :hasLink="true" btnLink="/" btnTitle="Back" />
-    <section class="my-5">
+    <section class="my-4">
+      <font-awesome-icon
+        class="py-2"
+        icon="fa-solid fa-circle-plus"
+        size="5x"
+      />
       <h1>Add Account</h1>
-      <p>Create a new type of Account.</p>
+      <p class="mb-5">Create a new type of Account.</p>
     </section>
 
     <form @submit="onSubmit">

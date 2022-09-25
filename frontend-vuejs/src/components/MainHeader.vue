@@ -16,16 +16,9 @@ export default {
 
 <template>
   <header>
-    <nav class="navbar navbar-expand-lg bg-light">
+    <nav class="navbar navbar-expand-lg bg-header">
       <div class="container-fluid">
         <router-link class="navbar-brand" to="/">{{ title }}</router-link>
-        <button
-          class="navbar-toggler"
-          type="button"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
         <div class="collapse navbar-collapse alignNavItemsRight">
           <ul class="navbar-nav">
             <HeaderLink title="Home" navLink="/" />
@@ -39,5 +32,8 @@ export default {
 <style scoped>
 .alignNavItemsRight {
   flex-grow: 0;
+}
+.bg-header {
+  background-color: #4cda7b;
 }
 </style>

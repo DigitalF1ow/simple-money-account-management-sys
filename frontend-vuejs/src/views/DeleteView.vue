@@ -101,9 +101,14 @@ export default {
 <template>
   <div class="container my-5">
     <CustomButton :hasLink="true" btnLink="/" btnTitle="Back" />
-    <section class="my-5">
+    <section class="my-4 px-2">
+      <font-awesome-icon
+        class="py-2"
+        icon="fa-solid fa-trash"
+        size="5x"
+      />
       <h1>Close Account</h1>
-      <p>
+      <p class="mb-5">
         Close your account from here, if there is any available balance in the
         account, it will be transferred automatically to your savings account.
       </p>

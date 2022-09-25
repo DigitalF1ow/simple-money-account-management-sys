@@ -32,9 +32,10 @@ export default {
 <template>
   <div class="container my-5">
     <CustomButton :hasLink="true" btnLink="/" btnTitle="Back" />
-    <section class="my-5">
+    <section class="my-4">
+      <font-awesome-icon class="py-2" icon="fa-solid fa-wallet" size="5x" />
       <h1>View Account Balance</h1>
-      <p>Check your account types and details from here.</p>
+      <p class="mb-5">Check your account types and details from here.</p>
     </section>
     <div v-show="successMsg" class="alert alert-success">
       New Account has successfully created.
