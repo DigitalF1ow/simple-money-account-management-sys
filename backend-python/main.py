@@ -12,11 +12,23 @@ from flask_apispec.extension import FlaskApiSpec
 from flask_apispec.views import MethodResource
 from flask_apispec import marshal_with, doc
 
+#Config Parser
+import configparser
+
+config = configparser.ConfigParser()
+config.read('database.ini')
+
+host = config['mariadatabase']['host']
+db = config['mariadatabase']['database']
+user = config['mariadatabase']['user']
+password = config['mariadatabase']['pwd']
+
 
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
 api = Api(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mariadb+pymysql://root:halflife2@127.0.0.1/money_management_sys'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mariadb+pymysql://{user}:{password}@{host}/{db}'
+
 
 app.config.update({
     'APISPEC_SPEC': APISpec(

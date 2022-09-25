@@ -43,4 +43,4 @@ All the requirements can be obtained in the requirements.txt in the backend-pyth
 In order to change the backend API URL, just change the server proxy located in the `vite.config.js`, 
 
 ## Configuring Database Connection
-You can do so in
+You can do so in `database.ini` to change the database configuration
