@@ -34,7 +34,7 @@ export default {
         this.idFromAccount = value;
         this.typeFromAccount = this.accounts.find(
           (account) => account.id === value
-        ).typename;
+        ).type_name;
         console.log(this.typeFromAccount);
       }
     },
@@ -45,7 +45,7 @@ export default {
         this.idToAccount = value;
         this.typeToAccount = this.accounts.find(
           (account) => account.id === value
-        ).typename;
+        ).type_name;
       }
     },
     amount(value) {
@@ -177,7 +177,7 @@ export default {
             :key="account.id"
             :value="account.id"
           >
-            {{ account.typename }} - RM{{ account.balance }}
+            {{ account.type_name }} - RM{{ account.balance }}
           </option>
         </select>
         <div class="invalid-feedback">
@@ -204,7 +204,7 @@ export default {
             :key="account.id"
             :value="account.id"
           >
-            {{ account.typename }} - RM{{ account.balance }}
+            {{ account.type_name }} - RM{{ account.balance }}
           </option>
         </select>
         <div class="invalid-feedback">

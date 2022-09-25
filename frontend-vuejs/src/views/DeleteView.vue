@@ -74,8 +74,7 @@ export default {
       try {
         const transferRes = await this.transferRemaining(account_id);
 
-        if (transferRes === true)
-        {
+        if (transferRes === true) {
           const res = await fetch(`api/account/${account_id}`, {
             method: "DELETE",
           });
@@ -87,7 +86,6 @@ export default {
             throw new Error();
           }
         }
-        
       } catch (error) {
         this.errorMsg = "Something went wrong! We are sorry about that.";
         this.errorDelete = true;

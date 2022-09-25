@@ -7,7 +7,7 @@ from flask_restful import Api, Resource, reqparse, abort, fields, marshal_with
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
 api = Api(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mariadb+pymysql://root:halflife2@127.0.0.1/test'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mariadb+pymysql://root:halflife2@127.0.0.1/money_management_sys'
 
 db = SQLAlchemy(app)
 
@@ -16,22 +16,22 @@ class UserModel(db.Model):
     __tablename__ = "user"
     
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, unique=True, nullable=False)
+    user_name = db.Column(db.String, unique=True, nullable=False)
     accounts = db.relationship('AccountModel',backref='user')
     
     #Similar To String Literal in JS
     def __repr__(self):
-        return f"User(id={self.id}, username={self.username})"
+        return f"User(id={self.id}, user_name={self.user_name})"
 
 class AccountTypeModel(db.Model):
     __tablename__ = 'account_type'
     
     id = db.Column(db.Integer, primary_key=True)
-    typename = db.Column(db.String(255), unique=True, nullable=False)
+    type_name = db.Column(db.String(255), unique=True, nullable=False)
     accounts = db.relationship('AccountModel',backref='account_type')
 
     def __repr__(self):
-        return f"AccountType(id={self.id},typename={self.typename})"
+        return f"AccountType(id={self.id},type_name={self.type_name})"
 
 class AccountModel(db.Model):
     __tablename__ = 'account'
@@ -61,12 +61,12 @@ account_put_args.add_argument("transfer_amount", type=float)
 #Serializers with Marshal With --> Takes results value from database and take into the JSON field, serialize it ino a JSON format
 user_fields = {
     'id' : fields.Integer,
-    'username': fields.String,
+    'user_name': fields.String,
 }
 
 acctType_fields = {
     'id' : fields.Integer,
-    'typename': fields.String,
+    'type_name': fields.String,
 }
 
 account_fields = {
@@ -81,7 +81,7 @@ account_with_types_fields = {
     'user_id': fields.Integer,
     'acct_type': fields.Integer,
     'balance': fields.Float,
-    'typename': fields.String,
+    'type_name': fields.String,
 }
 
 
@@ -172,7 +172,7 @@ class AccountsAPI(Resource):
     def get(self):
         res = AccountModel.query.with_entities(AccountModel.id, AccountModel.user_id, AccountModel.acct_type, AccountModel.balance)\
             .join(AccountTypeModel, AccountModel.acct_type==AccountTypeModel.id)\
-            .add_columns(AccountTypeModel.typename).all()
+            .add_columns(AccountTypeModel.type_name).all()
         if not res:
             abort(404, message = "Accounts can't be found.")
         return res
@@ -193,7 +193,7 @@ class AccountsByUserID(Resource):
         res = AccountModel.query.with_entities(AccountModel.id, AccountModel.user_id, AccountModel.acct_type, AccountModel.balance)\
             .filter_by(user_id=user_id)\
             .join(AccountTypeModel, AccountModel.acct_type==AccountTypeModel.id)\
-            .add_columns(AccountTypeModel.typename).all()
+            .add_columns(AccountTypeModel.type_name).all()
         print(res)
         
         if not res:

@@ -15,7 +15,7 @@ export default {
 <template>
   <div class="card">
     <div class="card-body">
-      <h5 class="card-title">{{ account.typename }} Account</h5>
+      <h5 class="card-title">{{ account.type_name }} Account</h5>
       <p class="card-text">
         Account Balance <br />
         RM{{ account.balance }}
