@@ -69,7 +69,6 @@ export default {
               query: { success: "true" },
             });
           }
-
         } catch (error) {
           console.log(error);
         }

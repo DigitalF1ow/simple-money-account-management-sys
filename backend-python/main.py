@@ -54,10 +54,8 @@ account_post_args.add_argument("balance", type=float, help="Balance of the Accou
 
 #Account Update Args
 account_put_args = reqparse.RequestParser()
-account_put_args.add_argument("acct_type", type=int)
-account_put_args.add_argument("user_id", type=int)
-account_put_args.add_argument("balance", type=float)
-account_put_args.add_argument("amount", type=float)
+account_put_args.add_argument("transfer_type", type=str)
+account_put_args.add_argument("transfer_amount", type=float)
 
 
 #Serializers with Marshal With --> Takes results value from database and take into the JSON field, serialize it ino a JSON format
@@ -127,10 +125,19 @@ class AccountAPI(Resource):
         if not res:
             abort(404, message="No such Account exist, abort any updates")
         
+        #Updates Balance Account based on transfer_type
+        if args["transfer_type"] == "deduct":
+            if args["transfer_amount"] and (res.balance - args["transfer_amount"]) >= 0: 
+                res.balance = res.balance - args["transfer_amount"]
+            elif (res.balance - args["transfer_amount"]) < 0:
+                abort(400, message="Invalid Amount")
+
+        elif args["transfer_type"] == "add":
+            if args["transfer_amount"]: 
+                res.balance = res.balance + args["transfer_amount"]
         
-        #Updates Info in Account Balance
-        if args["balance"]:
-            res.balance = args["balance"]
+        else:
+            abort(400, message="Invalid Request, please specify type of transfer")
 
         #Commits Update
         db.session.commit()

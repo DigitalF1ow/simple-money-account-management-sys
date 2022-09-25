@@ -23,6 +23,7 @@ export default {
       const acctData = await res.json();
       return acctData;
     },
+    async transferAccount() {},
     async deleteAccount(account_id) {
       try {
         const res = await fetch(`api/account/${account_id}`, {
@@ -33,7 +34,7 @@ export default {
           this.successDelete = true;
           this.accounts = await this.fetchAccounts();
         } else {
-          throw Error("Something Went Wrong!");
+          throw new Error();
         }
       } catch (error) {
         this.errorMsg = "Something went wrong! We are sorry about that.";
