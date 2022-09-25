@@ -10,7 +10,7 @@ from marshmallow import Schema, fields
 from apispec.ext.marshmallow import MarshmallowPlugin
 from flask_apispec.extension import FlaskApiSpec
 from flask_apispec.views import MethodResource
-from flask_apispec import marshal_with, doc, use_kwargs
+from flask_apispec import marshal_with, doc
 
 
 app = Flask(__name__)
@@ -80,7 +80,7 @@ account_put_args.add_argument("transfer_type", type=str)
 account_put_args.add_argument("transfer_amount", type=float)
 
 
-#Serializers with Marshal With --> Takes results value from database and take into the JSON field, serialize it ino a JSON format
+#Schemas used with Marshal With --> Takes results value from database and take into the JSON field, serialize it ino a JSON format
 class UserFields(Schema):
     id = fields.Int()
     user_name = fields.Str()
@@ -95,6 +95,7 @@ class AccountFields(Schema):
     acct_type= fields.Int()
     balance= fields.Float()
 
+@doc(description='Used for Accounts API and AccountsWithUserID API.', tags=['Accounts'])
 class AccountWithTypesFields(Schema): 
     id = fields.Int()
     user_id= fields.Int()
@@ -104,6 +105,7 @@ class AccountWithTypesFields(Schema):
 
 
 class UserAPI(MethodResource, Resource):
+    @doc(description='Get for One User.', tags=['User'])
     @marshal_with(UserFields)
     def get(self, user_id):
         res = UserModel.query.filter_by(id=user_id).first()
@@ -113,6 +115,7 @@ class UserAPI(MethodResource, Resource):
         return res
 
 class AccountTypeAPI(MethodResource, Resource):
+    @doc(description='Get for One Specific Type.', tags=['Account Types'])
     @marshal_with(AccountTypeFields)
     def get(self, type_id):
         res = AccountModel.query.filter_by(id=type_id).first()
@@ -122,7 +125,8 @@ class AccountTypeAPI(MethodResource, Resource):
         return res
 
 class AccountTypeListAPI(MethodResource, Resource):
-    @marshal_with(AccountTypeFields)
+    @doc(description='Get All Types of the Account.', tags=['Account Types'])
+    @marshal_with(AccountTypeFields(many=True))
     def get(self):
         res = AccountModel.query.all()
         
@@ -132,7 +136,7 @@ class AccountTypeListAPI(MethodResource, Resource):
     
 #Individual Account
 class AccountAPI(MethodResource, Resource):
-
+    @doc(description='Get One Account By ID.', tags=['Account'])
     @marshal_with(AccountFields)
     def get(self, account_id):
         res = AccountModel.query.filter_by(id=account_id).first()
@@ -141,6 +145,7 @@ class AccountAPI(MethodResource, Resource):
             abort(404, message = "Account can't be found")
         return res
     
+    @doc(description='Update using PATCH method to One Account By ID. Has Deduct and Add If Else Logic for Amount Balance', tags=['Account'])
     @marshal_with(AccountFields)
     def patch(self, account_id):
         args = account_put_args.parse_args()
@@ -170,6 +175,7 @@ class AccountAPI(MethodResource, Resource):
 
         return res
 
+    @doc(description='Delete One Account', tags=['Account'])
     @marshal_with(AccountFields)
     def delete(self, account_id):
         #Deletes the account instantly
@@ -186,6 +192,7 @@ class AccountAPI(MethodResource, Resource):
 
 #Get All Accounts
 class AccountsAPI(MethodResource, Resource):
+    @doc(description='Gets all of the accounts from the database including the type names.', tags=['Accounts'])
     @marshal_with(AccountWithTypesFields(many = True))
     def get(self):
         res = AccountModel.query.with_entities(AccountModel.id, AccountModel.user_id, AccountModel.acct_type, AccountModel.balance)\
@@ -194,7 +201,8 @@ class AccountsAPI(MethodResource, Resource):
         if not res:
             abort(404, message = "Accounts can't be found.")
         return res
-
+    
+    @doc(description='Creates new account into the database.', tags=['Account'])
     @marshal_with(AccountFields)
     def post(self):
         args = account_post_args.parse_args()
@@ -205,7 +213,8 @@ class AccountsAPI(MethodResource, Resource):
 
 #Get All Accounts Based on User ID
 class AccountsByUserID(MethodResource, Resource):
-
+    
+    @doc(description='Get Accounts based from a user ID.', tags=['Accounts'])
     @marshal_with(AccountWithTypesFields(many = True))
     def get(self, user_id):
         res = AccountModel.query.with_entities(AccountModel.id, AccountModel.user_id, AccountModel.acct_type, AccountModel.balance)\
@@ -243,4 +252,4 @@ docs.register(AccountAPI)
 def index():
     return 'Welcome to Money Account Management System Backend API using Flask Python!'
 
-app.run(host='0.0.0.0', port=5000, debug=True)
+app.run(host='0.0.0.0', port=5000)
